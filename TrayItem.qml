@@ -27,6 +27,7 @@ Clickable {
     Container {
         id: container
         border.color: "transparent"
+        color: "transparent"
         IconImage {
             anchors.fill: parent
             anchors.margins: {

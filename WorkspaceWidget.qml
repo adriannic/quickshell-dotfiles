@@ -39,7 +39,7 @@ Container {
                     Text {
                         anchors.centerIn: parent
                         text: `${clickable.modelData}`
-                        color: clickable.containsMouse ? Colors.background : Colors.foreground
+                        color: clickable.containsMouse ? Colors.selectedForeground : Colors.foreground
                         font: Settings.font
                         Behavior on color {
                             ColorAnimation {
@@ -59,7 +59,7 @@ Container {
         implicitHeight: 2
         x: 8 + 34 * (root.current.id - 1)
         y: 26
-        color: root.current.id > 9 ? "transparent" : hovered === root.current.id ? Colors.background : Colors.foreground
+        color: root.current.id > 9 ? "transparent" : hovered === root.current.id ? Colors.selectedForeground : Colors.foreground
 
         Behavior on color {
             ColorAnimation {

@@ -11,7 +11,7 @@ WrapperMouseArea {
         when: mouseArea.containsMouse
         PropertyChanges {
             target: child
-            color: Colors.foreground
+            color: Colors.selectedBackground
         }
     }
 }

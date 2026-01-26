@@ -10,7 +10,7 @@ Clickable {
             id: clock
             property bool showTime: true
             text: showTime ? Time.time : Time.date
-            color: clickable.containsMouse ? Colors.background : Colors.foreground
+            color: clickable.containsMouse ? Colors.selectedForeground : Colors.foreground
             font: Settings.font
             anchors.centerIn: parent
 

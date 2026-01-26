@@ -3,7 +3,7 @@ import QtQuick
 Rectangle {
     id: container
     color: Colors.background
-    border.color: Colors.color2
+    border.color: Colors.border
     implicitWidth: {
         let size = 0;
         for (const child of this.children) {

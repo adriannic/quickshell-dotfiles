@@ -20,13 +20,14 @@ Clickable {
     Container {
         Layout.preferredWidth: text.contentWidth + Settings.spacing * 4
         border.width: 0
+        color: "transparent"
 
         Text {
             id: text
             text: root.modelData.text
             font: Settings.font
             color: {
-                root.containsMouse ? Colors.background : root.modelData.hasChildren ? Colors.color2 : root.enabled ? Colors.foreground : Colors.color8;
+                root.containsMouse ? Colors.selectedForeground : root.modelData.hasChildren ? Colors.color2 : root.enabled ? Colors.foreground : Colors.color8;
             }
             anchors.centerIn: parent
 
