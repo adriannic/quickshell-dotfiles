@@ -2,23 +2,19 @@ import QtQuick
 
 Clickable {
     id: clickable
-    onReleased: clock.showTime = !clock.showTime
+    onReleased: clock.activated = !clock.activated
     Container {
         id: container
         implicitWidth: 85
-        Text {
+        StyledText {
             id: clock
-            property bool showTime: true
+            property bool activated: false
+            property bool showTime: activated ? clickable.containsMouse : !clickable.containsMouse
+
             text: showTime ? Time.time : Time.date
-            color: clickable.containsMouse ? Colors.selectedForeground : Colors.foreground
-            font: Settings.font
+            selected: clickable.containsMouse
             anchors.centerIn: parent
 
-            Behavior on color {
-                ColorAnimation {
-                    duration: Settings.duration
-                }
-            }
             FadeBehavior on showTime {
                 fadeDuration: Settings.duration / 2
             }

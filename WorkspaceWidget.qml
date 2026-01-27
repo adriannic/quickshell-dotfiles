@@ -36,16 +36,10 @@ Container {
                 onClicked: Hyprland.dispatch(`focusworkspaceoncurrentmonitor ${modelData}`)
                 Container {
                     border.width: 0
-                    Text {
+                    StyledText {
                         anchors.centerIn: parent
                         text: `${clickable.modelData}`
-                        color: clickable.containsMouse ? Colors.selectedForeground : Colors.foreground
-                        font: Settings.font
-                        Behavior on color {
-                            ColorAnimation {
-                                duration: Settings.duration
-                            }
-                        }
+                        selected: clickable.containsMouse
                     }
                 }
             }
@@ -57,9 +51,9 @@ Container {
         property int hovered: -1
         implicitWidth: 22
         implicitHeight: 2
-        x: 8 + 34 * (root.current.id - 1)
+        x: 8 + 34 * ((root.current ? root.current.id : 9) - 1)
         y: 26
-        color: root.current.id > 9 ? "transparent" : hovered === root.current.id ? Colors.selectedForeground : Colors.foreground
+        color: (root.current ? root.current.id : 9) > 9 ? "transparent" : hovered === (root.current ? root.current.id : 9) ? Colors.selectedForeground : Colors.foreground
 
         Behavior on color {
             ColorAnimation {

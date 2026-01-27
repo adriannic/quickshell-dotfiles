@@ -8,7 +8,8 @@ Clickable {
     visible: !root.modelData.isSeparator
     enabled: root.modelData.enabled
 
-    Layout.preferredHeight: text.contentHeight + Settings.spacing * 2
+    Layout.fillWidth: true
+    Layout.fillHeight: true
     Layout.leftMargin: 1
     Layout.rightMargin: 1
 
@@ -17,25 +18,15 @@ Clickable {
         mouse.accepted = false;
     }
 
-    Container {
-        Layout.preferredWidth: text.contentWidth + Settings.spacing * 4
-        border.width: 0
-        color: "transparent"
-
-        Text {
+    InvisibleContainer {
+        StyledText {
             id: text
             text: root.modelData.text
-            font: Settings.font
-            color: {
-                root.containsMouse ? Colors.selectedForeground : root.modelData.hasChildren ? Colors.color2 : root.enabled ? Colors.foreground : Colors.color8;
-            }
-            anchors.centerIn: parent
-
-            Behavior on color {
-                ColorAnimation {
-                    duration: Settings.duration
-                }
-            }
+            selected: root.containsMouse
+            color: root.containsMouse ? Colors.selectedForeground : root.modelData.hasChildren ? Colors.color2 : root.enabled ? Colors.foreground : Colors.color8
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left: parent.left
+            anchors.leftMargin: Settings.spacing * 2
         }
     }
 }
