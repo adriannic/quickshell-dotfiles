@@ -1,4 +1,5 @@
 import Quickshell
+import Quickshell.Io
 import QtQuick
 import QtQuick.Layouts
 
@@ -21,6 +22,22 @@ PopupWindow {
         return items * 32 + 4;
     }
     color: "transparent"
+
+    onVisibleChanged: if (visible) {
+        openSound.running = true;
+    } else {
+        closeSound.running = true;
+    }
+
+    Process {
+        id: openSound
+        command: ["sh", "-c", "mpv --no-video --volume=60 ~/.config/audio/sonic/open.wav"]
+    }
+
+    Process {
+        id: closeSound
+        command: ["sh", "-c", "mpv --no-video --volume=60 ~/.config/audio/sonic/close.wav"]
+    }
 
     QsMenuOpener {
         id: menuOpener

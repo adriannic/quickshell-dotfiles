@@ -1,4 +1,5 @@
 import Quickshell
+import Quickshell.Io
 import QtQuick
 import QtQuick.Layouts
 
@@ -16,9 +17,16 @@ Clickable {
     onClicked: mouse => {
         root.modelData.triggered();
         mouse.accepted = false;
+        confirmSound.running = true
+    }
+
+    Process {
+        id: confirmSound
+        command: ["sh", "-c", "mpv --no-video --volume=60 ~/.config/audio/sonic/confirm.wav"]
     }
 
     InvisibleContainer {
+        id: container
         StyledText {
             id: text
             text: root.modelData.text

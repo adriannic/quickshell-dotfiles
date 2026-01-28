@@ -12,6 +12,7 @@ Scope {
         imageSupported: true
         bodyMarkupSupported: true
         actionsSupported: true
+        keepOnReload: false
 
         onNotification: notification => {
             notification.tracked = true;
@@ -73,13 +74,18 @@ Scope {
 
                             Component.onCompleted: {
                                 x = 0;
-                                notificationAlert.running = true;
+                                openSound.running = true;
                                 notificationTimer.running = true;
                             }
 
                             Process {
-                                id: notificationAlert
-                                command: ["sh", "-c", "mpv --no-video ~/.config/audio/notification-mario.mp3"]
+                                id: openSound
+                                command: ["sh", "-c", "mpv --no-video --volume=60 ~/.config/audio/sonic/open.wav"]
+                            }
+
+                            Process {
+                                id: closeSound
+                                command: ["sh", "-c", "mpv --no-video --volume=60 ~/.config/audio/sonic/close.wav"]
                             }
 
                             Timer {
@@ -88,6 +94,7 @@ Scope {
                                 running: false
                                 onTriggered: if (notifications.modelData.name === Quickshell.screens[0].name) {
                                     notificationRoot.x = 450;
+                                    closeSound.running = true;
                                     notificationCloseTimer.running = true;
                                 }
                             }
@@ -118,7 +125,7 @@ Scope {
                             ClippingRectangle {
                                 id: imageWrapper
                                 visible: notificationRoot.modelData.image
-                                radius: 25
+                                radius: 15
                                 implicitWidth: image.paintedWidth
                                 implicitHeight: image.paintedHeight
                                 anchors {

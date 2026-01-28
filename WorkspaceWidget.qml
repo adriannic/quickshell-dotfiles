@@ -35,6 +35,7 @@ Container {
 
                 onClicked: Hyprland.dispatch(`focusworkspaceoncurrentmonitor ${modelData}`)
                 Container {
+                    id: container
                     border.width: 0
                     StyledText {
                         anchors.centerIn: parent

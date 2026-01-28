@@ -1,22 +1,37 @@
+import Quickshell.Io
 import QtQuick
 
-Clickable {
-    id: clickable
-    onReleased: clock.activated = !clock.activated
-    Container {
-        id: container
-        implicitWidth: 85
-        StyledText {
-            id: clock
-            property bool activated: false
-            property bool showTime: activated ? clickable.containsMouse : !clickable.containsMouse
+Container {
+    implicitWidth: 85
+    Clickable {
+        id: clickable
+        anchors.fill: parent
+        onReleased: {
+            clock.activated = !clock.activated;
+            pauseSound.running = true;
+        }
 
-            text: showTime ? Time.time : Time.date
-            selected: clickable.containsMouse
-            anchors.centerIn: parent
+        Process {
+            id: pauseSound
+            command: ["sh", "-c", "mpv --no-video --volume=60 ~/.config/audio/sonic/pause.wav"]
+        }
 
-            FadeBehavior on showTime {
-                fadeDuration: Settings.duration / 2
+        InvisibleContainer {
+            id: container
+            anchors.fill: parent
+            anchors.margins: 0
+            StyledText {
+                id: clock
+                property bool activated: false
+                property bool showTime: activated ? clickable.containsMouse : !clickable.containsMouse
+
+                text: showTime ? Time.time : Time.date
+                selected: clickable.containsMouse
+                anchors.centerIn: parent
+
+                FadeBehavior on showTime {
+                    fadeDuration: Settings.duration / 2
+                }
             }
         }
     }
