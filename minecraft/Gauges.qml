@@ -16,7 +16,7 @@ Variants {
         exclusiveZone: 0
         aboveWindows: false
 
-        margins.bottom: 3
+        margins.bottom: Settings.scale
 
         anchors {
             bottom: true
@@ -24,7 +24,7 @@ Variants {
             right: true
         }
 
-        implicitHeight: 100
+        implicitHeight: 25 * Settings.scale
 
         Image {
             id: xpBarBg
@@ -34,8 +34,8 @@ Variants {
             }
 
             source: "textures/experience_bar_background"
-            width: 546
-            height: 15
+            width: 182 * Settings.scale
+            height: 5 * Settings.scale
 
             smooth: false
             fillMode: Image.PreserveAspectFit
@@ -43,8 +43,8 @@ Variants {
                 id: xpBar
 
                 source: "textures/experience_bar_progress"
-                width: 546 * Cpu.usage
-                height: 15
+                width: 182 * Settings.scale * Cpu.usage
+                height: 5 * Settings.scale
 
                 smooth: false
                 fillMode: Image.PreserveAspectFit
@@ -57,9 +57,9 @@ Variants {
             anchors {
                 bottom: xpBarBg.top
                 horizontalCenter: parent.horizontalCenter
-                bottomMargin: -6
+                bottomMargin: -2 * Settings.scale
             }
-            scale: 3
+            scale: Settings.scale
             text: Time.day
             isExp: true
         }
@@ -67,13 +67,13 @@ Variants {
         Rectangle {
             id: hearts
             property int value: 17
-            implicitWidth: 243
-            implicitHeight: 27
+            implicitWidth: 81 * Settings.scale
+            implicitHeight: 9 * Settings.scale
             color: "transparent"
             anchors {
                 bottom: xpBarBg.top
                 left: xpBarBg.left
-                bottomMargin: 3
+                bottomMargin: Settings.scale
             }
             Repeater {
                 model: 10
@@ -83,12 +83,12 @@ Variants {
 
                     anchors {
                         left: hearts.left
-                        leftMargin: 24 * index
+                        leftMargin: 8 * Settings.scale * index
                     }
 
                     source: "textures/container"
-                    width: 27
-                    height: 27
+                    width: 9 * Settings.scale
+                    height: 9 * Settings.scale
                     smooth: false
                     fillMode: Image.PreserveAspectFit
                 }
@@ -101,7 +101,7 @@ Variants {
 
                     anchors {
                         left: hearts.left
-                        leftMargin: 24 * index
+                        leftMargin: 8 * Settings.scale * index
                     }
 
                     visible: hearts.value > index * 2
@@ -112,8 +112,8 @@ Variants {
                         }
                         return "textures/half";
                     }
-                    width: 27
-                    height: 27
+                    width: 9 * Settings.scale
+                    height: 9 * Settings.scale
                     smooth: false
                     fillMode: Image.PreserveAspectFit
                 }
@@ -123,13 +123,32 @@ Variants {
         Rectangle {
             id: foodBar
             property int value: 17
-            implicitWidth: 243
-            implicitHeight: 27
+            implicitWidth: 81 * Settings.scale
+            implicitHeight: 9 * Settings.scale
             color: "transparent"
             anchors {
                 bottom: xpBarBg.top
                 right: xpBarBg.right
-                bottomMargin: 3
+                bottomMargin: Settings.scale
+            }
+
+            Repeater {
+                model: 10
+                Image {
+                    id: foodBase
+                    required property int index
+
+                    anchors {
+                        right: foodBar.right
+                        rightMargin: 8 * Settings.scale * index
+                    }
+
+                    source: "textures/food_empty"
+                    width: 9 * Settings.scale
+                    height: 9 * Settings.scale
+                    smooth: false
+                    fillMode: Image.PreserveAspectFit
+                }
             }
 
             Repeater {
@@ -140,19 +159,19 @@ Variants {
 
                     anchors {
                         right: foodBar.right
-                        rightMargin: 24 * index
+                        rightMargin: 8 * Settings.scale * index
                     }
+
+                    visible: foodBar.value > index * 2
 
                     source: {
                         if (foodBar.value > index * 2 + 1) {
                             return "textures/food_full";
-                        } else if (foodBar.value > index * 2) {
-                            return "textures/food_half";
                         }
-                        return "textures/food_empty";
+                        return "textures/food_half";
                     }
-                    width: 27
-                    height: 27
+                    width: 9 * Settings.scale
+                    height: 9 * Settings.scale
                     smooth: false
                     fillMode: Image.PreserveAspectFit
                 }
@@ -162,13 +181,13 @@ Variants {
         Rectangle {
             id: armorBar
             property int value: 17
-            implicitWidth: 243
-            implicitHeight: 27
+            implicitWidth: 81 * Settings.scale
+            implicitHeight: 9 * Settings.scale
             color: "transparent"
             anchors {
                 bottom: hearts.top
                 left: hearts.left
-                bottomMargin: 3
+                bottomMargin: Settings.scale
             }
 
             Repeater {
@@ -179,7 +198,7 @@ Variants {
 
                     anchors {
                         left: armorBar.left
-                        leftMargin: 24 * index
+                        leftMargin: 8 * Settings.scale * index
                     }
 
                     source: {
@@ -191,8 +210,8 @@ Variants {
                         }
                         return "textures/armor_empty";
                     }
-                    width: 27
-                    height: 27
+                    width: 9 * Settings.scale
+                    height: 9 * Settings.scale
                     smooth: false
                     fillMode: Image.PreserveAspectFit
                 }
@@ -202,14 +221,14 @@ Variants {
         Rectangle {
             id: airBar
             property int value: Math.round(UPower.displayDevice.percentage * 10)
-            implicitWidth: 243
-            implicitHeight: 27
+            implicitWidth: 81 * Settings.scale
+            implicitHeight: 9 * Settings.scale
             color: "transparent"
             visible: UPower.devices.values.length
             anchors {
                 bottom: foodBar.top
                 right: foodBar.right
-                bottomMargin: 3
+                bottomMargin: Settings.scale
             }
 
             Repeater {
@@ -220,7 +239,7 @@ Variants {
 
                     anchors {
                         right: airBar.right
-                        rightMargin: 24 * index
+                        rightMargin: 8 * Settings.scale * index
                     }
 
                     source: {
@@ -229,8 +248,8 @@ Variants {
                         }
                         return "textures/air_empty";
                     }
-                    width: 27
-                    height: 27
+                    width: 9 * Settings.scale
+                    height: 9 * Settings.scale
                     smooth: false
                     fillMode: Image.PreserveAspectFit
                 }

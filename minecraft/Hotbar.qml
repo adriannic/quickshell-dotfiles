@@ -18,18 +18,18 @@ Variants {
             right: true
         }
 
-        implicitHeight: 69
+        implicitHeight: 22 * Settings.scale
 
         Image {
             id: leftSlot
             anchors {
                 right: hotbar.left
                 bottom: parent.bottom
-                rightMargin: 21
+                rightMargin: 7 * Settings.scale
             }
             source: "textures/slot-left"
-            width: 66
-            height: 66
+            width: 22 * Settings.scale
+            height: 22 * Settings.scale
 
             smooth: false
             fillMode: Image.PreserveAspectFit
@@ -38,13 +38,12 @@ Variants {
         Image {
             id: hotbar
             anchors {
-                right: parent.right
+                horizontalCenter: parent.horizontalCenter
                 bottom: parent.bottom
-                rightMargin: 687
             }
             source: "textures/hotbar"
-            width: 546
-            height: 66
+            width: 182 * Settings.scale
+            height: 22 * Settings.scale
 
             smooth: false
             fillMode: Image.PreserveAspectFit
@@ -54,20 +53,20 @@ Variants {
             id: selection
             property HyprlandWorkspace current: Hyprland.monitorFor(root.modelData).activeWorkspace
             anchors {
-                left: parent.left
+                left: leftSlot.left
                 top: parent.top
                 bottom: parent.bottom
                 leftMargin: {
                     if (current && current.id <= 9) {
-                        return 684 + 60 * (current.id - 1);
+                        return (20 * (current.id - 1) + 29) * Settings.scale;
                     }
 
-                    return 597
+                    return 0;
                 }
             }
             source: "textures/hotbar_selection"
-            width: 72
-            height: 69
+            width: 22 * Settings.scale
+            height: 22 * Settings.scale
 
             smooth: false
             fillMode: Image.PreserveAspectFit
@@ -78,10 +77,10 @@ Variants {
             anchors {
                 top: hotbar.top
                 right: hotbar.right
-                topMargin: 36
-                rightMargin: 6 + 60 * 5
+                topMargin: 12 * Settings.scale
+                rightMargin: (20 * 5 + 2) * Settings.scale + 1
             }
-            scale: 3
+            scale: Settings.scale
             text: Time.hours
         }
 
@@ -90,10 +89,10 @@ Variants {
             anchors {
                 top: hotbar.top
                 right: hotbar.right
-                topMargin: 36
-                rightMargin: 6 + 60 * 4
+                topMargin: 12 * Settings.scale
+                rightMargin: (20 * 4 + 2) * Settings.scale + 1
             }
-            scale: 3
+            scale: Settings.scale
             text: Time.minutes
         }
 
@@ -102,10 +101,10 @@ Variants {
             anchors {
                 top: hotbar.top
                 right: hotbar.right
-                topMargin: 36
-                rightMargin: 6 + 60 * 3
+                topMargin: 12 * Settings.scale
+                rightMargin: (20 * 3 + 2) * Settings.scale + 1
             }
-            scale: 3
+            scale: Settings.scale
             text: Time.seconds
         }
     }

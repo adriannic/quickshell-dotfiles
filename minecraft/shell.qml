@@ -4,7 +4,7 @@ import QtQml
 Scope {
   Hotbar {}
   Gauges {}
-  // Toasts {}
+  Advancements {}
 
   Connections {
     target: Quickshell

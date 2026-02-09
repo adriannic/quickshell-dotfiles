@@ -14,4 +14,6 @@ Singleton {
             weight: minecraftFont.font.weight,
             styleName: minecraftFont.font.styleName
         })
+
+    readonly property int scale: 3;
 }
