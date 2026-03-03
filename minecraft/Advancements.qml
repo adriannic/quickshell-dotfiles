@@ -11,7 +11,7 @@ Scope {
         id: notificationServer
         imageSupported: true
         bodyMarkupSupported: true
-        actionsSupported: true
+        actionsSupported: false
         keepOnReload: false
 
         onNotification: notification => {
@@ -23,212 +23,225 @@ Scope {
         id: advancementVariant
         model: Quickshell.screens
 
-        Variants {
-            id: advancementScreen
-            required property ShellScreen modelData
-            model: notificationServer.trackedNotifications.values
-            readonly property int index: advancementVariant.instances.findIndex(elem => elem === this)
+        PanelWindow {
+            id: advancementWindow
+            required property var modelData
+            screen: modelData
 
-            PanelWindow {
-                id: advancement
-                required property Notification modelData
-                readonly property int index: advancementScreen.instances.findIndex(elem => elem === this)
-                screen: advancementScreen.modelData
+            exclusionMode: ExclusionMode.Ignore
+            implicitWidth: 160 * Settings.scale
+            mask: Region {
+                width: advancementWindow.implicitWidth
+                height: advancementList.implicitHeight
+            }
 
+            color: "transparent"
+
+            anchors {
+                top: true
+                right: true
+                bottom: true
+            }
+
+            Rectangle {
+                id: advancementList
+                anchors.left: parent.left
+                anchors.right: parent.right
+
+                implicitHeight: advancementColumn.childrenRect.height
                 color: "transparent"
 
-                implicitWidth: 160 * Settings.scale
-                implicitHeight: {
-                    let height = ((advancementBody.lineCount + advancementSummary.lineCount) * 7 + 13) * Settings.scale;
-                    if (height < 32 * Settings.scale) {
-                        height = 32 * Settings.scale;
-                    }
-                    return height;
-                }
-                exclusiveZone: 0
+                Column {
+                    id: advancementColumn
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    spacing: -1 * Settings.scale
 
-                anchors {
-                    top: true
-                    right: true
-                }
+                    Instantiator {
+                        id: advancementInstantiator
+                        model: notificationServer.trackedNotifications
 
-                Behavior on implicitHeight {
-                    NumberAnimation {
-                        duration: 100
-                        easing.type: Easing.InOutQuad
-                    }
-                }
+                        delegate: Rectangle {
+                            id: advancement
 
-                margins {
-                    top: {
-                        let height = 0;
-                        for (let i = 0; i < index; ++i) {
-                            height += advancementScreen.instances[i].implicitHeight;
+                            required property Notification modelData
+                            required property int index
+
+                            width: 160 * Settings.scale
+                            height: 0
+                            color: "transparent"
+
+                            anchors.left: parent.left
+                            anchors.leftMargin: advancementColumn.width
+
+                            Component.onCompleted: {
+                                height = Qt.binding(() => {
+                                    let lineCount = advancementBody.lineCount + advancementSummary.lineCount;
+                                    let h = (lineCount * 7 + 13) * Settings.scale;
+                                    return Math.max(h, 32 * Settings.scale);
+                                });
+
+                                advancementGrowingTimer.start();
+                            }
+
+                            Timer {
+                                id: advancementGrowingTimer
+                                interval: 300
+                                running: false
+                                onTriggered: {
+                                    advancement.anchors.leftMargin = 0;
+                                }
+                            }
+
+                            Behavior on anchors.leftMargin {
+                                NumberAnimation {
+                                    duration: 500
+                                    easing.type: Easing.InOutQuad
+                                }
+                            }
+
+                            Behavior on height {
+                                NumberAnimation {
+                                    duration: 300
+                                    easing.type: Easing.InOutQuad
+                                }
+                            }
+
+                            Timer {
+                                id: mainTimer
+                                interval: 10500
+                                running: true
+                                onTriggered: {
+                                    advancement.anchors.leftMargin = parent.width;
+                                    closingAnimationTimer.running = true;
+                                }
+                            }
+
+                            Timer {
+                                id: closingAnimationTimer
+                                interval: 500
+                                running: false
+                                onTriggered: {
+                                    advancement.height = 0;
+                                    advancementShrinkingTimer.running = true;
+                                }
+                            }
+
+                            Timer {
+                                id: advancementShrinkingTimer
+                                interval: 500
+                                running: false
+                                onTriggered: {
+                                    advancement.modelData.dismiss();
+                                }
+                            }
+
+                            MouseArea {
+                                id: mouseArea
+                                anchors.fill: parent
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    advancement.anchors.leftMargin = parent.width;
+                                    closingAnimationTimer.running = true;
+                                }
+                            }
+
+                            Image {
+                                id: advancementBgTop
+                                anchors {
+                                    top: parent.top
+                                    left: parent.left
+                                    right: parent.right
+                                }
+                                source: "textures/advancement_top"
+                                height: 4 * Settings.scale
+                                smooth: false
+                            }
+
+                            Image {
+                                id: advancementBgMiddle
+                                anchors {
+                                    top: advancementBgTop.bottom
+                                    bottom: advancementBgBottom.top
+                                    left: parent.left
+                                    right: parent.right
+                                }
+                                source: "textures/advancement_middle"
+                                width: parent.width
+                                height: parent.height - 8 * Settings.scale
+                                smooth: false
+                            }
+
+                            Image {
+                                id: advancementBgBottom
+                                anchors {
+                                    bottom: parent.bottom
+                                    left: parent.left
+                                    right: parent.right
+                                }
+                                source: "textures/advancement_bottom"
+                                width: parent.width
+                                height: 4 * Settings.scale
+                                smooth: false
+                            }
+
+                            Image {
+                                id: advancementIcon
+                                visible: advancement.modelData.image
+                                source: advancement.modelData.image || ""
+                                width: 20 * Settings.scale
+                                height: 20 * Settings.scale
+                                anchors {
+                                    top: parent.top
+                                    left: parent.left
+                                    topMargin: 6 * Settings.scale
+                                    leftMargin: 6 * Settings.scale
+                                }
+                                fillMode: Image.PreserveAspectFit
+                            }
+
+                            PixelText {
+                                id: advancementSummary
+                                scale: Settings.scale - 1
+                                text: advancement.modelData.summary || ""
+                                isTitle: true
+                                wrapMode: Text.Wrap
+                                elide: Text.ElideRight
+                                maximumLineCount: 1
+                                anchors {
+                                    right: parent.right
+                                    left: advancementIcon.visible ? advancementIcon.right : parent.left
+                                    top: parent.top
+                                    topMargin: 6 * Settings.scale
+                                    rightMargin: 5 * Settings.scale
+                                    leftMargin: advancementIcon.visible ? 4 * Settings.scale : 6 * Settings.scale
+                                }
+                            }
+
+                            PixelText {
+                                id: advancementBody
+                                scale: Settings.scale - 1
+                                text: advancement.modelData.body || ""
+                                wrapMode: Text.Wrap
+                                maximumLineCount: 4
+                                anchors {
+                                    right: parent.right
+                                    left: advancementIcon.visible ? advancementIcon.right : parent.left
+                                    top: advancementSummary.bottom
+                                    bottom: parent.bottom
+                                    topMargin: 3 * Settings.scale
+                                    bottomMargin: 6 * Settings.scale
+                                    rightMargin: 5 * Settings.scale
+                                    leftMargin: advancementIcon.visible ? 4 * Settings.scale : 6 * Settings.scale
+                                }
+                            }
                         }
-                        return height;
-                    }
-                }
 
-                Timer {
-                    id: mainTimer
-                    interval: 10500
-                    running: true
-                    onTriggered: {
-                        container.anchors.leftMargin = parent.width;
-                        container.anchors.rightMargin = -parent.width;
-                        closingAnimationTimer.running = true;
-                    }
-                }
-
-                Timer {
-                    id: closingAnimationTimer
-                    interval: 500
-                    running: false
-                    onTriggered: {
-                        advancement.implicitHeight = 0;
-                        if (advancementScreen.index === 0)
-                            advancementShrinkingTimer.running = true;
-                    }
-                }
-
-                Timer {
-                    id: advancementShrinkingTimer
-                    interval: 500
-                    running: false
-                    onTriggered: {
-                        advancement.modelData.dismiss();
-                    }
-                }
-
-                MouseArea {
-                    id: mouseArea
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: {
-                        container.anchors.leftMargin = parent.width;
-                        container.anchors.rightMargin = -parent.width;
-                        closingAnimationTimer.running = true;
-                    }
-                }
-
-                Rectangle {
-                    id: container
-                    anchors.fill: parent
-                    color: "transparent"
-                    anchors.leftMargin: parent.width
-                    anchors.rightMargin: -parent.width
-
-                    Component.onCompleted: {
-                        anchors.leftMargin = 0;
-                        anchors.rightMargin = 0;
-                    }
-
-                    Behavior on anchors.leftMargin {
-                        NumberAnimation {
-                            duration: 500
-                            easing.type: Easing.InOutQuad
+                        onObjectAdded: (index, object) => {
+                            object.parent = advancementColumn;
                         }
-                    }
 
-                    Behavior on anchors.rightMargin {
-                        NumberAnimation {
-                            duration: 500
-                            easing.type: Easing.InOutQuad
-                        }
-                    }
-
-                    Image {
-                        id: advancementBgTop
-                        anchors {
-                            top: parent.top
-                            left: parent.left
-                            right: parent.right
-                        }
-                        source: "textures/advancement_top"
-                        height: 4 * Settings.scale
-
-                        smooth: false
-                    }
-
-                    Image {
-                        id: advancementBgMiddle
-                        anchors {
-                            top: advancementBgTop.bottom
-                            bottom: advancementBgBottom.top
-                            left: parent.left
-                            right: parent.right
-                        }
-                        source: "textures/advancement_middle"
-                        width: parent.implicitWidth
-                        height: parent.implicitHeight - 8 * Settings.scale
-
-                        smooth: false
-                    }
-
-                    Image {
-                        id: advancementBgBottom
-                        anchors {
-                            bottom: parent.bottom
-                            left: parent.left
-                            right: parent.right
-                        }
-                        source: "textures/advancement_bottom"
-                        width: parent.implicitWidth
-                        height: 4 * Settings.scale
-
-                        smooth: false
-                    }
-
-                    Image {
-                        id: advancementIcon
-                        visible: advancement.modelData.image
-                        source: advancement.modelData.image
-                        width: 20 * Settings.scale
-                        height: 20 * Settings.scale
-
-                        anchors {
-                            top: parent.top
-                            left: parent.left
-                            topMargin: 6 * Settings.scale
-                            leftMargin: 6 * Settings.scale
-                        }
-                        fillMode: Image.PreserveAspectFit
-                    }
-
-                    PixelText {
-                        id: advancementSummary
-                        scale: Settings.scale - 1
-                        text: advancement.modelData.summary
-                        isTitle: true
-                        wrapMode: Text.Wrap
-                        elide: Text.ElideRight
-                        maximumLineCount: 1
-                        anchors {
-                            right: parent.right
-                            left: advancementIcon.visible ? advancementIcon.right : advancementIcon.left
-                            top: parent.top
-                            topMargin: 6 * Settings.scale
-                            rightMargin: 5 * Settings.scale
-                            leftMargin: advancementIcon.visible ? 4 * Settings.scale : 0
-                        }
-                    }
-
-                    PixelText {
-                        id: advancementBody
-                        scale: Settings.scale - 1
-                        text: advancement.modelData.body
-                        wrapMode: Text.Wrap
-                        maximumLineCount: 8
-                        anchors {
-                            right: parent.right
-                            left: advancementIcon.visible ? advancementIcon.right : advancementIcon.left
-                            top: advancementSummary.bottom
-                            bottom: parent.bottom
-                            topMargin: 3 * Settings.scale
-                            bottomMargin: 6 * Settings.scale
-                            rightMargin: 5 * Settings.scale
-                            leftMargin: advancementIcon.visible ? 4 * Settings.scale : 0
-                        }
+                        onObjectRemoved: (index, object) => {}
                     }
                 }
             }
