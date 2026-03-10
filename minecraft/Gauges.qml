@@ -66,7 +66,7 @@ Variants {
 
         Rectangle {
             id: hearts
-            property int value: 17
+            property int value: 20 - Math.round(Disk.free / 5)
             implicitWidth: 81 * Settings.scale
             implicitHeight: 9 * Settings.scale
             color: "transparent"
