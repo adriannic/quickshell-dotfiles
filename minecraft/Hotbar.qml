@@ -11,6 +11,7 @@ Variants {
         screen: modelData
 
         color: "transparent"
+        aboveWindows: false
 
         anchors {
             bottom: true
