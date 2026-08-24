@@ -36,7 +36,7 @@ Scope {
             }
 
             color: "transparent"
-            aboveWindows: false
+            aboveWindows: true
 
             anchors {
                 top: true
